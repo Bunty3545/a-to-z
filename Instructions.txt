@@ -1,0 +1,60 @@
+====================================================================
+           MICROSOFT OFFICE APP SERVICES - USER GUIDE
+====================================================================
+
+🚀 QUICK START:
+1. File ko simply Double-Click karke open karein (Zero-Level Admin Access: Kisi bhi Admin permission ya 'Run as administrator' ki zaroorat nahi hai - Normal User account me bhi 100% smooth chalega!).
+2. Ek popup aayega ("Device Verification"):
+   - Apna Registration Number / Token enter karein.
+   - "Verify Launch" par click karein.
+3. App background me start ho jayegi (Koi extra window khuli nahi rahegi).
+4. Status check karne ke liye: Press "Shift + F" (Side menu open ho jayega).
+
+--------------------------------------------------------------------
+💻 1. CODING QUESTIONS KAISE SOLVE KAREIN:
+--------------------------------------------------------------------
+Step 1 [Question Capture]:
+- Screen par question open karein aur F6 (ya Alt+6) dabayein.
+- (Agar question lamba ho ya scroll karna pade, toh scroll karke wapas F6 dabayein. Max 5 screenshots tak le sakte hain).
+
+Step 2 [AI Solution]:
+- F7 (ya Alt+7) dabayein. AI code solve karega (2-3 seconds).
+- Cursor screen ke top par move hoga ya overlay par "Complete" aayega.
+
+Step 3 [Code Typing - Ghost Typer]:
+- Apne compiler / code editor ke text area me click karein.
+- F11 (ya Alt+1) dabayein (Ghost Typer ON ho jayega).
+- Ab keyboard par KOI BHI keys press karte rahein (random tap).
+  Aap jo bhi dabayenge, screen par exact correct solution character-by-character type hota jayega!
+  (Real typing lagti hai, platform ko pata nahi chalta).
+- *Option B:* Agar direct paste karna chahein toh "Alt + E" se instant clean paste bhi kar sakte hain.
+
+--------------------------------------------------------------------
+🟢 2. MCQ QUESTIONS KAISE SOLVE KAREIN:
+--------------------------------------------------------------------
+Trigger:
+- Screen par MCQ question open karein aur mouse cursor ko 2 second ke andar jaldi se Up-Down shake (hilayein).
+- Cursor '+' icon ban jayega.
+
+Answer Direction:
+- Cursor apne aap move hoke answer batayega:
+  ⬆️ Cursor Upar gaya   = Option A
+  ➡️ Cursor Right gaya  = Option B
+  ⬇️ Cursor Neeche gaya = Option C
+  ⬅️ Cursor Left gaya   = Option D
+
+--------------------------------------------------------------------
+⌨️ SARE SHORTCUTS (QUICK REFERENCE):
+--------------------------------------------------------------------
+[Shift + F]   -> Menu / Status Overlay open/close karein
+[F6 / Alt+6]  -> Question ka Screenshot capture karein (Max 5)
+[F7 / Alt+7]  -> AI Code Solve karein
+[F11 / Alt+1] -> Ghost Typer ON / OFF (Stealth human-like typing)
+[Alt + E]     -> Instant Clean Paste
+[F3 / Alt+3]  -> Code Preview Box (Screen par solution dekhne ke liye)
+[F1 / F2]     -> Code Box me Scroll Up / Down
+[F9 / Alt+9]  -> Screenshot buffer & code buffer clear karein
+[F10 / Alt+0] -> Panic / Pause Mode
+[Alt+Shift+T] -> Emergency Off / Kill (App turant memory se close ho jayegi)
+
+====================================================================

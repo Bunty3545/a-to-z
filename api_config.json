@@ -1,0 +1,72 @@
+{
+  "_comment": "Default fallback keys (used if student does not have dedicated keys)",
+  "DEFAULT_QUERY_LIMIT": 100,
+  "GEMINI": {
+    "api_keys": [
+      "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw"
+    ],
+    "models": [
+      "gemini-2.0-flash",
+      "gemini-1.5-flash",
+      "gemini-2.0-flash-lite-preview-02-05",
+      "gemini-1.5-pro"
+    ]
+  },
+  "GROQ": {
+    "api_keys": [
+      "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"
+    ],
+    "endpoint": "https://api.groq.com/openai/v1/chat/completions",
+    "models": [
+      "llama-3.3-70b-versatile",
+      "llama-3.1-8b-instant",
+      "llama-3.2-11b-vision-preview",
+      "mixtral-8x7b-32768"
+    ]
+  },
+  "OPENROUTER": {
+    "api_keys": [
+      "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"
+    ],
+    "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+    "models": [
+      "meta-llama/llama-3.2-11b-vision-instruct:free",
+      "google/gemini-2.0-flash-exp:free",
+      "openrouter/auto"
+    ]
+  },
+  "CEREBRAS": {
+    "api_keys": [
+      "csk-w4m5r664cd6wfnmhfr9mrccn8ymt26xm232vr9mmey2cfjje"
+    ],
+    "endpoint": "https://api.cerebras.ai/v1/chat/completions",
+    "models": [
+      "llama-3.3-70b",
+      "llama3.1-8b"
+    ]
+  },
+  "ZAI": {
+    "api_keys": [
+      "703cf9a14a8642ee9c617caf65e030eb.AIiOekT1Zcyw0LcJ"
+    ],
+    "endpoints": [
+      "https://api.z.ai/api/paas/v4/chat/completions",
+      "https://open.bigmodel.cn/api/paas/v4/chat/completions"
+    ],
+    "models": [
+      "glm-4.5-air",
+      "glm-5.3-flash",
+      "glm-4.5",
+      "glm-5"
+    ]
+  },
+  "USER_KEYS": {
+    "_comment": "Per-Registration Number dedicated API keys",
+    "12303979": {
+      "name": "Owner (bunty)",
+      "limit": -1,
+      "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
+      "api_key_2": "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"
+    }
+  }
+}

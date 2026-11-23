@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Activity & Audit Dashboard</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script>
+    if (typeof io === 'undefined') {
+      document.write('<script src="http://localhost:4000/socket.io/socket.io.js"><\/script>');
+    }
+  </script>
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--card, #0f172a); }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="bg-[var(--background,#0b0f19)] text-[var(--foreground,#f8fafc)] antialiased font-sans min-h-screen">
+
+  <!-- Top Navigation Bar -->
+  <header class="border-b border-[var(--border,#1e293b)] bg-[var(--card,#0f172a)]/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold">
+          ⚡
+        </div>
+        <div>
+          <h1 class="text-base font-semibold text-[var(--foreground,#f8fafc)]">Admin Activity & Audit Control</h1>
+          <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Session Telemetry & Operational Analytics</p>
+        </div>
+      </div>
+
+      <!-- Live Stream Indicator & Global Controls -->
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-[var(--background,#0b0f19)] px-3 py-1.5 rounded-full border border-[var(--border,#1e293b)] text-xs">
+          <span id="livePulse" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="liveStatusText" class="text-emerald-400 font-medium">Live Stream Active</span>
+        </div>
+        <button id="toggleStreamBtn" onclick="toggleStream()" class="px-3 py-1.5 rounded-lg bg-[var(--border,#1e293b)] hover:bg-slate-700 text-xs font-medium text-slate-200 transition">
+          Pause Stream
+        </button>
+        <button onclick="exportData('json')" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-medium text-white transition shadow-sm">
+          Export JSON
+        </button>
+        <button onclick="exportData('csv')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-medium text-white transition shadow-sm">
+          Export CSV
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground,#94a3b8)]">
+          <span>Active Sessions</span>
+          <span class="text-emerald-400 font-bold">Live</span>
+        </div>
+        <div class="text-2xl font-bold mt-2 text-white" id="metricActiveSessions">3</div>
+        <p class="text-xs text-slate-400 mt-1">Across 2 unique organizations</p>
+      </div>
+
+      <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground,#94a3b8)]">
+          <span>Today's Total Events</span>
+          <span class="text-blue-400 font-bold">+18.4%</span>
+        </div>
+        <div class="text-2xl font-bold mt-2 text-white" id="metricTotalEvents">142</div>
+        <p class="text-xs text-slate-400 mt-1">Queries & solver invocations</p>
+      </div>
+
+      <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground,#94a3b8)]">
+          <span>MCQ vs Code Solves</span>
+          <span class="text-purple-400 font-bold">Ratio</span>
+        </div>
+        <div class="text-2xl font-bold mt-2 text-white" id="metricRatio">64% : 36%</div>
+        <p class="text-xs text-slate-400 mt-1">91 MCQs / 51 Coding tasks</p>
+      </div>
+
+      <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-4 shadow-sm">
+        <div class="flex items-center justify-between text-xs text-[var(--muted-foreground,#94a3b8)]">
+          <span>Ghost Typing Activity</span>
+          <span class="text-amber-400 font-bold">Characters</span>
+        </div>
+        <div class="text-2xl font-bold mt-2 text-white" id="metricGhostChars">18,450</div>
+        <p class="text-xs text-slate-400 mt-1">Total characters injected</p>
+      </div>
+    </div>
+
+    <!-- Analytics Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Activity Timeline Chart -->
+      <div class="lg:col-span-2 bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-5 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-sm font-semibold text-white">Activity Invocations Over Time</h2>
+            <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Hourly breakdown of operational triggers</p>
+          </div>
+          <span class="text-xs bg-blue-500/10 text-blue-400 px-2.5 py-1 rounded-full border border-blue-500/20">Last 12 Hours</span>
+        </div>
+        <div class="w-full h-56 relative">
+          <canvas id="timelineCanvas" class="w-full h-full block"></canvas>
+        </div>
+      </div>
+
+      <!-- Action Distribution Chart -->
+      <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-5 shadow-sm flex flex-col justify-between">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-sm font-semibold text-white">Action Distribution</h2>
+            <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">Event categorical share</p>
+          </div>
+          <span class="text-xs bg-purple-500/10 text-purple-400 px-2.5 py-1 rounded-full border border-purple-500/20">Breakdown</span>
+        </div>
+        <div class="w-full h-56 relative flex items-center justify-center">
+          <canvas id="donutCanvas" class="w-full h-full block"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Parameter Filters Section -->
+    <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-4 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <h2 class="text-sm font-semibold text-white">Filter & Inspect Audit Trail</h2>
+        <button onclick="resetFilters()" class="text-xs text-blue-400 hover:text-blue-300">Reset All Filters</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Search input -->
+        <div>
+          <label class="block text-xs text-[var(--muted-foreground,#94a3b8)] mb-1">Registration / User Search</label>
+          <input type="text" id="filterSearch" oninput="applyFilters()" placeholder="e.g. 12303979 or Prashant"
+            class="w-full bg-[var(--background,#0b0f19)] border border-[var(--border,#1e293b)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+        </div>
+
+        <!-- Action Type Filter -->
+        <div>
+          <label class="block text-xs text-[var(--muted-foreground,#94a3b8)] mb-1">Action Type</label>
+          <select id="filterAction" onchange="applyFilters()"
+            class="w-full bg-[var(--background,#0b0f19)] border border-[var(--border,#1e293b)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+            <option value="ALL">All Actions</option>
+            <option value="SESSION_START">SESSION_START</option>
+            <option value="MCQ_SOLVE_REQUESTED">MCQ_SOLVE_REQUESTED</option>
+            <option value="CODE_SCREENSHOT_CAPTURED">CODE_SCREENSHOT_CAPTURED</option>
+            <option value="CODE_SOLVE_REQUESTED">CODE_SOLVE_REQUESTED</option>
+            <option value="GHOST_TYPER_TOGGLED">GHOST_TYPER_TOGGLED</option>
+            <option value="ADMIN_COMMAND: PAUSE">ADMIN_COMMAND: PAUSE</option>
+            <option value="ADMIN_COMMAND: RESUME">ADMIN_COMMAND: RESUME</option>
+            <option value="ADMIN_COMMAND: DEACTIVATE">ADMIN_COMMAND: DEACTIVATE</option>
+            <option value="ADMIN_COMMAND: ACTIVATE">ADMIN_COMMAND: ACTIVATE</option>
+            <option value="SESSION_END">SESSION_END</option>
+          </select>
+        </div>
+
+        <!-- Status Filter -->
+        <div>
+          <label class="block text-xs text-[var(--muted-foreground,#94a3b8)] mb-1">Status Severity</label>
+          <select id="filterStatus" onchange="applyFilters()"
+            class="w-full bg-[var(--background,#0b0f19)] border border-[var(--border,#1e293b)] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-blue-500">
+            <option value="ALL">All Statuses</option>
+            <option value="SUCCESS">Success / Verified</option>
+            <option value="WARNING">Warning / Paused</option>
+            <option value="TERMINATED">Terminated / Deactivated</option>
+          </select>
+        </div>
+
+        <!-- Simulation Trigger -->
+        <div>
+          <label class="block text-xs text-[var(--muted-foreground,#94a3b8)] mb-1">Simulate Realtime Inflow</label>
+          <button onclick="generateSimulatedEvent()" class="w-full bg-blue-600/30 hover:bg-blue-600/50 border border-blue-500/50 rounded-lg px-3 py-2 text-xs text-blue-200 font-medium transition flex items-center justify-center gap-1.5">
+            <span>+</span> <span>Simulate Event</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Live Access Governance & Session Control Section -->
+    <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl p-5 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h2 class="text-sm font-semibold text-white flex items-center gap-2">
+            <span>🛡️</span> <span>Live Access Governance & Remote Session Controls</span>
+          </h2>
+          <p class="text-xs text-[var(--muted-foreground,#94a3b8)]">
+            Remotely Pause, Resume, Activate, or Deactivate user authorization in real time.
+          </p>
+        </div>
+
+        <!-- Global Broadcast Controls -->
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="executeGlobalControl('PAUSE')" class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 text-xs font-medium transition flex items-center gap-1">
+            <span>⏸️</span> <span>Pause All</span>
+          </button>
+          <button onclick="executeGlobalControl('RESUME')" class="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-medium transition flex items-center gap-1">
+            <span>▶️</span> <span>Resume All</span>
+          </button>
+          <button onclick="executeGlobalControl('DEACTIVATE')" class="px-2.5 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 text-xs font-medium transition flex items-center gap-1">
+            <span>🛑</span> <span>Deactivate All</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- User Session Control Cards Grid -->
+      <div id="userControlCards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- Audit Event Log Table -->
+    <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl overflow-hidden shadow-sm">
+      <div class="px-5 py-4 border-b border-[var(--border,#1e293b)] flex items-center justify-between">
+        <div>
+          <h2 class="text-sm font-semibold text-white">Audit Event Stream</h2>
+          <p class="text-xs text-[var(--muted-foreground,#94a3b8)]" id="streamCounterText">Showing 8 of 8 records</p>
+        </div>
+        <span class="text-xs text-slate-400">Click any row to inspect full payload</span>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-900/50 text-[var(--muted-foreground,#94a3b8)] border-b border-[var(--border,#1e293b)]">
+              <th class="py-3 px-4 font-medium">Timestamp (UTC)</th>
+              <th class="py-3 px-4 font-medium">Registration No</th>
+              <th class="py-3 px-4 font-medium">User Name</th>
+              <th class="py-3 px-4 font-medium">Session ID</th>
+              <th class="py-3 px-4 font-medium">Action Performed</th>
+              <th class="py-3 px-4 font-medium">Severity</th>
+              <th class="py-3 px-4 font-medium text-center">Session Controls</th>
+              <th class="py-3 px-4 font-medium text-right">Inspect</th>
+            </tr>
+          </thead>
+          <tbody id="auditTableBody" class="divide-y divide-[var(--border,#1e293b)] text-slate-200">
+            <!-- Dynamic rows will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Inspection Modal -->
+  <div id="inspectModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+    <div class="bg-[var(--card,#0f172a)] border border-[var(--border,#1e293b)] rounded-xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden shadow-2xl">
+      <div class="px-5 py-4 border-b border-[var(--border,#1e293b)] flex items-center justify-between">
+        <div>
+          <h3 class="text-sm font-semibold text-white" id="modalTitle">Audit Event Inspection</h3>
+          <p class="text-xs text-slate-400" id="modalSubtitle">Event ID & Metadata</p>
+        </div>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg font-bold">✕</button>
+      </div>
+      <div class="p-5 overflow-y-auto space-y-4">
+        <div>
+          <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Payload JSON</h4>
+          <pre id="modalJson" class="bg-black/60 p-3 rounded-lg text-xs font-mono text-emerald-400 overflow-x-auto border border-slate-800"></pre>
+        </div>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
+            <span class="text-slate-400 block mb-1">User Identifier</span>
+            <span class="text-white font-mono font-semibold" id="modalUser">--</span>
+          </div>
+          <div class="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
+            <span class="text-slate-400 block mb-1">Device Hostname</span>
+            <span class="text-white font-mono font-semibold" id="modalDevice">--</span>
+          </div>
+        </div>
+      </div>
+      <div class="px-5 py-3 border-t border-[var(--border,#1e293b)] flex items-center justify-between">
+        <div class="flex items-center gap-2" id="modalActionButtons">
+          <!-- Dynamic action controls in modal -->
+        </div>
+        <button onclick="closeModal()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-white transition">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dashboard Engine Logic -->
+  <script>
+    // Initial Audit Records Seed Data
+    let auditData = [
+      {
+        timestamp: "2026-10-31T17:15:20.100Z",
+        reg_no: "12303979",
+        user_name: "Prashant Kumar",
+        session_id: "c8e19a42",
+        action: "SESSION_START",
+        status: "SUCCESS",
+        details: { device: "WIN-PRASHANT", os_user: "ASUS", role: "Owner", auth_method: "Gist Sync" }
+      },
+      {
+        timestamp: "2026-10-31T17:16:04.420Z",
+        reg_no: "12303979",
+        user_name: "Prashant Kumar",
+        session_id: "c8e19a42",
+        action: "MCQ_SOLVE_REQUESTED",
+        status: "SUCCESS",
+        details: { trigger: "Shake Gesture", resolved_answer: "B", backend_used: "Gemini 3.1 Flash", latency_ms: 640 }
+      },
+      {
+        timestamp: "2026-10-31T17:18:12.890Z",
+        reg_no: "12303979",
+        user_name: "Prashant Kumar",
+        session_id: "c8e19a42",
+        action: "CODE_SCREENSHOT_CAPTURED",
+        status: "SUCCESS",
+        details: { shots_count: 2, resolution: "1920x1080", region: "Full Screen" }
+      },
+      {
+        timestamp: "2026-10-31T17:19:02.110Z",
+        reg_no: "12303979",
+        user_name: "Prashant Kumar",
+        session_id: "c8e19a42",
+        action: "CODE_SOLVE_REQUESTED",
+        status: "SUCCESS",
+        details: { language: "C++", output_lines: 48, indent_mode: "2-space", backend_used: "Groq Qwen" }
+      },
+      {
+        timestamp: "2026-10-31T17:20:45.330Z",
+        reg_no: "12303979",
+        user_name: "Prashant Kumar",
+        session_id: "c8e19a42",
+        action: "GHOST_TYPER_TOGGLED",
+        status: "WARNING",
+        details: { active: true, total_chars: 760, leading_spaces_stripped: true }
+      },
+      {
+        timestamp: "2026-10-31T17:22:15.650Z",
+        reg_no: "12303980",
+        user_name: "Student A",
+        session_id: "7f4d221e",
+        action: "SESSION_START",
+        status: "SUCCESS",
+        details: { device: "LAB-PC-04", os_user: "Student", role: "Student", auth_method: "Cached Key" }
+      },
+      {
+        timestamp: "2026-10-31T17:23:40.810Z",
+        reg_no: "12303980",
+        user_name: "Student A",
+        session_id: "7f4d221e",
+        action: "MCQ_SOLVE_REQUESTED",
+        status: "SUCCESS",
+        details: { trigger: "Corner Hover 3x", resolved_answer: "D", backend_used: "OpenRouter", latency_ms: 810 }
+      },
+      {
+        timestamp: "2026-10-31T17:25:00.000Z",
+        reg_no: "12303980",
+        user_name: "Student A",
+        session_id: "7f4d221e",
+        action: "SESSION_END",
+        status: "TERMINATED",
+        details: { reason: "Panic Switch Triggered (F10)", duration_sec: 165 }
+      }
+    ];
+
+    // User Access Governance & State Map
+    let userControlState = {
+      "12303979": { name: "Prashant Kumar", status: "ACTIVE", state: "RUNNING" },
+      "12303980": { name: "Student A", status: "ACTIVE", state: "RUNNING" }
+    };
+
+    let isStreaming = true;
+    let streamInterval = null;
+    let liveSocket = null;
+
+    // Render User Access Control Cards in the Governance Section
+    function renderControlCards() {
+      const container = document.getElementById("userControlCards");
+      if (!container) return;
+      container.innerHTML = "";
+
+      Object.entries(userControlState).forEach(([regNo, user]) => {
+        const isDeactivated = user.status === "DEACTIVATED";
+        const isPaused = user.state === "PAUSED";
+
+        const card = document.createElement("div");
+        card.className = "bg-[var(--background,#0b0f19)] border border-[var(--border,#1e293b)] rounded-xl p-3.5 space-y-2.5 shadow-sm";
+
+        // Badges
+        const statusBadge = isDeactivated
+          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">🔴 DEACTIVATED</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">🟢 ACTIVE</span>`;
+
+        const stateBadge = isPaused
+          ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">⏸️ PAUSED</span>`
+          : `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/20 text-blue-300 border border-blue-500/30">⚡ RUNNING</span>`;
+
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-white font-mono font-semibold text-xs">${regNo}</span>
+              <p class="text-slate-400 text-[11px] font-medium">${user.name}</p>
+            </div>
+            <div class="flex items-center gap-1.5">
+              ${statusBadge}
+              ${stateBadge}
+            </div>
+          </div>
+          <div class="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+            <!-- Pause / Resume Button -->
+            <button onclick="executeControl('${regNo}', '${isPaused ? 'RESUME' : 'PAUSE'}')"
+              class="flex-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border ${isPaused ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40' : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/40'}">
+              ${isPaused ? '▶️ Resume' : '⏸️ Pause'}
+            </button>
+            <!-- Deactivate / Activate Button -->
+            <button onclick="executeControl('${regNo}', '${isDeactivated ? 'ACTIVATE' : 'DEACTIVATE'}')"
+              class="flex-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold transition border ${isDeactivated ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border-rose-500/40'}">
+              ${isDeactivated ? '🔓 Activate' : '🛑 Deactivate'}
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Execute Control action on a user
+    function executeControl(regNo, command) {
+      if (!userControlState[regNo]) {
+        userControlState[regNo] = { name: "User " + regNo, status: "ACTIVE", state: "RUNNING" };
+      }
+
+      if (command === 'PAUSE') userControlState[regNo].state = 'PAUSED';
+      else if (command === 'RESUME') userControlState[regNo].state = 'RUNNING';
+      else if (command === 'DEACTIVATE') userControlState[regNo].status = 'DEACTIVATED';
+      else if (command === 'ACTIVATE') userControlState[regNo].status = 'ACTIVE';
+
+      // 1. Dispatch WebSocket event if socket is active
+      if (liveSocket && liveSocket.connected) {
+        liveSocket.emit('admin_session_control', { regNo, command });
+      }
+
+      // 2. Dispatch REST API call to backend
+      fetch('http://localhost:4000/api/control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ regNo, command, adminName: 'Admin Dashboard' })
+      }).catch(() => {});
+
+      // 3. Inject immediate audit record in live feed
+      const newEvent = {
+        timestamp: new Date().toISOString(),
+        reg_no: regNo,
+        user_name: userControlState[regNo].name,
+        session_id: "ctrl_" + Math.random().toString(16).substring(2, 8),
+        action: `ADMIN_COMMAND: ${command}`,
+        status: command === 'DEACTIVATE' ? 'TERMINATED' : (command === 'PAUSE' ? 'WARNING' : 'SUCCESS'),
+        details: { command, targetUser: regNo, executedBy: "Admin" }
+      };
+
+      auditData.push(newEvent);
+
+      // Re-render UI components
+      renderControlCards();
+      applyFilters();
+      updateCharts();
+    }
+
+    // Global Action on all active users
+    function executeGlobalControl(command) {
+      Object.keys(userControlState).forEach(regNo => {
+        executeControl(regNo, command);
+      });
+    }
+
+    // Filter & Render Table with Access Controls Column
+    function renderTable(dataToRender) {
+      const tbody = document.getElementById("auditTableBody");
+      tbody.innerHTML = "";
+
+      if (dataToRender.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-500 text-xs">No audit events match current filters.</td></tr>`;
+        document.getElementById("streamCounterText").innerText = "Showing 0 records";
+        return;
+      }
+
+      document.getElementById("streamCounterText").innerText = `Showing ${dataToRender.length} of ${auditData.length} records`;
+
+      dataToRender.slice().reverse().forEach((event, idx) => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-800/40 cursor-pointer transition border-b border-[var(--border,#1e293b)]";
+        tr.onclick = () => openModal(event);
+
+        // Status badge style
+        let badgeClass = "bg-blue-500/10 text-blue-400 border-blue-500/20";
+        if (event.status === "SUCCESS") badgeClass = "bg-emerald-500/10 text-emerald-400 border-emerald-500/20";
+        else if (event.status === "WARNING") badgeClass = "bg-amber-500/10 text-amber-400 border-amber-500/20";
+        else if (event.status === "TERMINATED") badgeClass = "bg-rose-500/10 text-rose-400 border-rose-500/20";
+
+        const timeFormatted = event.timestamp.replace("T", " ").substring(0, 19);
+
+        // Fetch user state
+        const userState = userControlState[event.reg_no] || { status: "ACTIVE", state: "RUNNING" };
+        const isPaused = userState.state === "PAUSED";
+        const isDeactivated = userState.status === "DEACTIVATED";
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 font-mono text-slate-400">${timeFormatted}</td>
+          <td class="py-3 px-4 font-mono font-medium text-white">${event.reg_no}</td>
+          <td class="py-3 px-4 text-slate-300 font-medium">${event.user_name}</td>
+          <td class="py-3 px-4 font-mono text-slate-400">${event.session_id}</td>
+          <td class="py-3 px-4 font-mono text-blue-400">${event.action}</td>
+          <td class="py-3 px-4">
+            <span class="inline-block px-2 py-0.5 rounded text-[11px] font-semibold border ${badgeClass}">
+              ${event.status}
+            </span>
+          </td>
+          <!-- Row Level Remote Controls -->
+          <td class="py-3 px-4 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="event.stopPropagation(); executeControl('${event.reg_no}', '${isPaused ? 'RESUME' : 'PAUSE'}')"
+                class="px-2 py-1 rounded text-[11px] font-semibold transition border ${isPaused ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/30' : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/30'}">
+                ${isPaused ? '▶️ Resume' : '⏸️ Pause'}
+              </button>
+              <button onclick="event.stopPropagation(); executeControl('${event.reg_no}', '${isDeactivated ? 'ACTIVATE' : 'DEACTIVATE'}')"
+                class="px-2 py-1 rounded text-[11px] font-semibold transition border ${isDeactivated ? 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border-emerald-500/30' : 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border-rose-500/30'}">
+                ${isDeactivated ? '🔓 Activate' : '🛑 Deactivate'}
+              </button>
+            </div>
+          </td>
+          <td class="py-3 px-4 text-right">
+            <button class="text-blue-400 hover:text-blue-300 font-medium text-xs">View →</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Modal Inspection
+    function openModal(event) {
+      document.getElementById("modalTitle").innerText = `Event: ${event.action}`;
+      document.getElementById("modalSubtitle").innerText = `Timestamp: ${event.timestamp} | Session: ${event.session_id}`;
+      document.getElementById("modalJson").innerText = JSON.stringify(event, null, 2);
+      document.getElementById("modalUser").innerText = `${event.reg_no} (${event.user_name})`;
+      document.getElementById("modalDevice").innerText = event.details.device || "Unknown Machine";
+
+      // Render modal action buttons
+      const userState = userControlState[event.reg_no] || { status: "ACTIVE", state: "RUNNING" };
+      const isPaused = userState.state === "PAUSED";
+      const isDeactivated = userState.status === "DEACTIVATED";
+
+      const btnContainer = document.getElementById("modalActionButtons");
+      if (btnContainer) {
+        btnContainer.innerHTML = `
+          <button onclick="executeControl('${event.reg_no}', '${isPaused ? 'RESUME' : 'PAUSE'}'); closeModal();"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold border ${isPaused ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-amber-500/20 text-amber-300 border-amber-500/40'}">
+            ${isPaused ? '▶️ Resume Session' : '⏸️ Pause Session'}
+          </button>
+          <button onclick="executeControl('${event.reg_no}', '${isDeactivated ? 'ACTIVATE' : 'DEACTIVATE'}'); closeModal();"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold border ${isDeactivated ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40'}">
+            ${isDeactivated ? '🔓 Re-Activate User' : '🛑 Deactivate Access'}
+          </button>
+        `;
+      }
+
+      const modal = document.getElementById("inspectModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    // Apply Multi-parameter filters
+    function applyFilters() {
+      const searchVal = document.getElementById("filterSearch").value.toLowerCase().trim();
+      const actionVal = document.getElementById("filterAction").value;
+      const statusVal = document.getElementById("filterStatus").value;
+
+      const filtered = auditData.filter(item => {
+        const matchesSearch = !searchVal || 
+          item.reg_no.toLowerCase().includes(searchVal) || 
+          item.user_name.toLowerCase().includes(searchVal) || 
+          item.session_id.toLowerCase().includes(searchVal);
+
+        const matchesAction = actionVal === "ALL" || item.action === actionVal;
+        const matchesStatus = statusVal === "ALL" || item.status === statusVal;
+
+        return matchesSearch && matchesAction && matchesStatus;
+      });
+
+      renderTable(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById("filterSearch").value = "";
+      document.getElementById("filterAction").value = "ALL";
+      document.getElementById("filterStatus").value = "ALL";
+      applyFilters();
+    }
+
+    // Modal Inspection
+    function openModal(event) {
+      document.getElementById("modalTitle").innerText = `Event: ${event.action}`;
+      document.getElementById("modalSubtitle").innerText = `Timestamp: ${event.timestamp} | Session: ${event.session_id}`;
+      document.getElementById("modalJson").innerText = JSON.stringify(event, null, 2);
+      document.getElementById("modalUser").innerText = `${event.reg_no} (${event.user_name})`;
+      document.getElementById("modalDevice").innerText = event.details.device || "Unknown Machine";
+
+      const modal = document.getElementById("inspectModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeModal() {
+      const modal = document.getElementById("inspectModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // Export to JSON or CSV
+    function exportData(format) {
+      if (format === 'json') {
+        const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `audit_telemetry_${Date.now()}.json`;
+        a.click();
+      } else if (format === 'csv') {
+        let csv = "Timestamp,RegistrationNo,UserName,SessionID,Action,Status,Details\n";
+        auditData.forEach(row => {
+          const detailStr = `"${JSON.stringify(row.details).replace(/"/g, '""')}"`;
+          csv += `${row.timestamp},${row.reg_no},${row.user_name},${row.session_id},${row.action},${row.status},${detailStr}\n`;
+        });
+        const blob = new Blob([csv], { type: "text/csv" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `audit_telemetry_${Date.now()}.csv`;
+        a.click();
+      }
+    }
+
+    // Real-time Event Simulation
+    function generateSimulatedEvent() {
+      const users = [
+        { reg: "12303979", name: "Prashant Kumar", dev: "WIN-PRASHANT" },
+        { reg: "12303980", name: "Student A", dev: "LAB-PC-04" },
+        { reg: "12303982", name: "Student B", dev: "LAPTOP-TEST" }
+      ];
+      const actions = [
+        { name: "MCQ_SOLVE_REQUESTED", status: "SUCCESS", detail: { trigger: "Shake", ans: ["A","B","C","D"][Math.floor(Math.random()*4)] } },
+        { name: "CODE_SOLVE_REQUESTED", status: "SUCCESS", detail: { language: "C++", lines: Math.floor(Math.random()*40+20) } },
+        { name: "GHOST_TYPER_TOGGLED", status: "WARNING", detail: { active: true, progress: "100%" } },
+        { name: "CODE_SCREENSHOT_CAPTURED", status: "SUCCESS", detail: { shot: 1 } }
+      ];
+
+      const u = users[Math.floor(Math.random() * users.length)];
+      const a = actions[Math.floor(Math.random() * actions.length)];
+
+      const newEvent = {
+        timestamp: new Date().toISOString(),
+        reg_no: u.reg,
+        user_name: u.name,
+        session_id: "s" + Math.random().toString(16).substring(2, 8),
+        action: a.name,
+        status: a.status,
+        details: { ...a.detail, device: u.dev }
+      };
+
+      auditData.push(newEvent);
+      applyFilters();
+      updateCharts();
+      document.getElementById("metricTotalEvents").innerText = auditData.length;
+    }
+
+    function toggleStream() {
+      isStreaming = !isStreaming;
+      const pulse = document.getElementById("livePulse");
+      const statusText = document.getElementById("liveStatusText");
+      const btn = document.getElementById("toggleStreamBtn");
+
+      if (isStreaming) {
+        pulse.className = "w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse";
+        statusText.innerText = "Live Stream Active";
+        statusText.className = "text-emerald-400 font-medium";
+        btn.innerText = "Pause Stream";
+        startStreaming();
+      } else {
+        pulse.className = "w-2.5 h-2.5 rounded-full bg-amber-500";
+        statusText.innerText = "Stream Paused";
+        statusText.className = "text-amber-400 font-medium";
+        btn.innerText = "Resume Stream";
+        clearInterval(streamInterval);
+      }
+    }
+
+    function startStreaming() {
+      clearInterval(streamInterval);
+      streamInterval = setInterval(() => {
+        if (isStreaming && Math.random() > 0.45) {
+          generateSimulatedEvent();
+        }
+      }, 4500);
+    }
+
+    // Native HTML5 Canvas Charts (CSP-Safe, Zero external CDN dependencies)
+    function drawTimeline() {
+      const canvas = document.getElementById("timelineCanvas");
+      if (!canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+
+      // Sample hourly data points
+      const points = [12, 18, 9, 24, 38, 52, 44, 60, 78, 65, 88, 95];
+      const maxVal = 100;
+      const stepX = (w - 40) / (points.length - 1);
+
+      // Grid lines
+      ctx.strokeStyle = "#1e293b";
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = 20 + (i * (h - 50) / 4);
+        ctx.beginPath();
+        ctx.moveTo(35, y);
+        ctx.lineTo(w - 10, y);
+        ctx.stroke();
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "10px sans-serif";
+        ctx.fillText(Math.round(maxVal - (i * maxVal / 4)), 10, y + 3);
+      }
+
+      // Draw Area Gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, h);
+      grad.addColorStop(0, "rgba(59, 130, 246, 0.35)");
+      grad.addColorStop(1, "rgba(59, 130, 246, 0.0)");
+
+      ctx.beginPath();
+      points.forEach((val, i) => {
+        const px = 35 + i * stepX;
+        const py = h - 30 - ((val / maxVal) * (h - 50));
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+      ctx.lineTo(35 + (points.length - 1) * stepX, h - 30);
+      ctx.lineTo(35, h - 30);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Draw Line
+      ctx.beginPath();
+      ctx.strokeStyle = "#38bdf8";
+      ctx.lineWidth = 2.5;
+      points.forEach((val, i) => {
+        const px = 35 + i * stepX;
+        const py = h - 30 - ((val / maxVal) * (h - 50));
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+
+      // Data dots
+      points.forEach((val, i) => {
+        const px = 35 + i * stepX;
+        const py = h - 30 - ((val / maxVal) * (h - 50));
+        ctx.fillStyle = "#0f172a";
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#38bdf8";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      });
+    }
+
+    function drawDonut() {
+      const canvas = document.getElementById("donutCanvas");
+      if (!canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const radius = Math.min(cx, cy) - 24;
+      const innerRadius = radius * 0.65;
+
+      const counts = { MCQ: 0, Code: 0, Ghost: 0, Session: 0 };
+      auditData.forEach(d => {
+        if (d.action.includes("MCQ")) counts.MCQ++;
+        else if (d.action.includes("CODE")) counts.Code++;
+        else if (d.action.includes("GHOST")) counts.Ghost++;
+        else counts.Session++;
+      });
+
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      const data = [
+        { label: "MCQs", val: counts.MCQ, color: "#38bdf8" },
+        { label: "Coding", val: counts.Code, color: "#818cf8" },
+        { label: "Ghost Typer", val: counts.Ghost, color: "#34d399" },
+        { label: "Sessions", val: counts.Session, color: "#f59e0b" }
+      ];
+
+      let startAngle = -Math.PI / 2;
+      data.forEach(slice => {
+        const sliceAngle = (slice.val / total) * Math.PI * 2;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
+        ctx.arc(cx, cy, innerRadius, startAngle + sliceAngle, startAngle, true);
+        ctx.closePath();
+        ctx.fillStyle = slice.color;
+        ctx.fill();
+        startAngle += sliceAngle;
+      });
+
+      // Center Text
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 18px sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(total, cx, cy - 6);
+
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "11px sans-serif";
+      ctx.fillText("Events", cx, cy + 12);
+    }
+
+    function updateCharts() {
+      drawTimeline();
+      drawDonut();
+    }
+
+    // Check for live backend connection via Socket.io
+    function initLiveBackendSocket() {
+      if (typeof io !== 'undefined') {
+        try {
+          const socket = io('http://localhost:4000', { reconnectionAttempts: 5, timeout: 3000 });
+          liveSocket = socket;
+
+          socket.on('connect', () => {
+            console.log('[SOCKET] Connected to Live Telemetry Backend on port 4000');
+            const statusText = document.getElementById("liveStatusText");
+            if (statusText) {
+              statusText.innerText = "Live Backend (Port 4000 Connected)";
+              statusText.className = "text-emerald-400 font-bold";
+            }
+          });
+
+          socket.on('initial_controls', (controls) => {
+            if (controls) {
+              Object.keys(controls).forEach(k => {
+                if (!userControlState[k]) {
+                  userControlState[k] = { name: "User " + k, ...controls[k] };
+                } else {
+                  userControlState[k].status = controls[k].status;
+                  userControlState[k].state = controls[k].state;
+                }
+              });
+              renderControlCards();
+              applyFilters();
+            }
+          });
+
+          socket.on('session_control_update', (update) => {
+            if (update && update.regNo) {
+              if (!userControlState[update.regNo]) {
+                userControlState[update.regNo] = { name: "User " + update.regNo };
+              }
+              userControlState[update.regNo].status = update.status;
+              userControlState[update.regNo].state = update.state;
+              renderControlCards();
+              applyFilters();
+            }
+          });
+
+          socket.on('initial_history', (events) => {
+            if (events && events.length > 0) {
+              auditData = events;
+              applyFilters();
+              updateCharts();
+              document.getElementById("metricTotalEvents").innerText = auditData.length;
+            }
+          });
+
+          socket.on('new_audit_event', (event) => {
+            auditData.push(event);
+            applyFilters();
+            updateCharts();
+            document.getElementById("metricTotalEvents").innerText = auditData.length;
+          });
+        } catch (e) {
+          console.warn('[SOCKET] Could not connect to live backend:', e);
+        }
+      }
+    }
+
+    // Initialize Dashboard
+    window.addEventListener("DOMContentLoaded", () => {
+      renderControlCards();
+      renderTable(auditData);
+      updateCharts();
+      startStreaming();
+      initLiveBackendSocket();
+    });
+
+    window.addEventListener("resize", () => {
+      updateCharts();
+    });
+  </script>
+</body>
+</html>

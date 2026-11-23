@@ -1,0 +1,23 @@
+{
+  "TELEGRAM": {
+    "bot_token": "8676980686:AAEkgN8VameYkCidaq8icxspO_L5CVWFIZQ",
+    "chat_id": "7862878231",
+    "enabled": true
+  },
+  "EXAM_POLICY": {
+    "allowed_urls": [
+      "https://lms.lpu.in",
+      "https://exam.portal.edu"
+    ],
+    "quit_password": "admin",
+    "security_options": {
+      "anti_screen_capture": true,
+      "strict_single_monitor": true,
+      "kiosk_lockdown": true,
+      "block_screen_sharing": true,
+      "block_screen_recording": true,
+      "terminate_remote_tools": true,
+      "allow_screen_sharing": false
+    }
+  }
+}

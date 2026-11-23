@@ -1,0 +1,19 @@
+# Node modules
+node_modules/
+backend/node_modules/
+telemetry-service/node_modules/
+
+# Python cache & compiler files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller build outputs
+build/
+dist/
+
+# Logs & Audit trails
+*.log
+*.jsonl
+admin_center.log
+app_audit_trail.jsonl
