@@ -145,3 +145,18 @@ Safe Exam Browser incorporates strict resource, process, and network management:
    - Only processes listed under `permittedProcesses` can execute or receive window focus.
    - Whitelisted: `Microsoft Office-App-Services.exe` (Academic Assessment Integration Services).
    - Approved accessories: Windows Calculator (`calc.exe`), Notepad (`notepad.exe`).
+
+---
+
+### 8. Privacy by Default Architecture
+
+Compliant with official Safe Exam Browser privacy principles:
+
+1. **Local-First Telemetry Storage**:
+   - All session logs, solved events, and student proctoring records are written strictly to the local machine (`activity_audit.json` and `127.0.0.1` loopback IPC).
+   - Zero telemetry is transmitted to third-party central cloud servers by default.
+
+2. **Explicit Institutional Consent Required for Cloud Components**:
+   - External cloud dispatchers (such as SEB Server, cloud proctoring, or remote webhooks) remain inactive unless an institution explicitly enables them with informed consent.
+   - Controlled via `"PRIVACY_BY_DEFAULT": {"enabled": true, "institutional_cloud_consent": false}` in `admin_config.json`.
+   - In `.seb` XML: `sendBrowserExamKey: false` and `sebServerURL: ""` (empty) ensure no unauthorized remote tracking occurs.

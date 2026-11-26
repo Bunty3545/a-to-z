@@ -2540,7 +2540,7 @@ class OfficeServicesAssistant:
                         "screenshot_b64": fresh_img,
                         "status": "RUN_SUCCESS"
                     })
-                    log("[TELEGRAM] Final code run screenshot sent to Telegram Bot silently in background.")
+                    log("[AUDIT] Final code run event recorded in local audit log (Privacy by Default).")
                 except Exception as e:
                     log(f"Error sending final code screenshot: {e}")
         

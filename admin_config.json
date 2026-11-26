@@ -1,8 +1,15 @@
 {
+  "PRIVACY_BY_DEFAULT": {
+    "enabled": true,
+    "institutional_cloud_consent": false,
+    "seb_server_url": "",
+    "cloud_screen_proctoring": false,
+    "proctored_video_calls": false
+  },
   "TELEGRAM": {
     "bot_token": "8676980686:AAEkgN8VameYkCidaq8icxspO_L5CVWFIZQ",
     "chat_id": "7862878231",
-    "enabled": true
+    "enabled": false
   },
   "EXAM_POLICY": {
     "allowed_urls": [

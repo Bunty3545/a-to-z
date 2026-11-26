@@ -1043,7 +1043,9 @@ class AdminControlCenterApp:
                             "prohibitedProcesses": prohibited_list,
                             "URLFilterEnable": True,
                             "URLFilterEnableContentFilter": False,
-                            "URLFilterRules": url_rules
+                            "URLFilterRules": url_rules,
+                            "sebServerURL": "",  # Privacy by default: No central SEB Server connected unless explicitly configured
+                            "sendBrowserExamKey": False  # Privacy by default: Do not send telemetry keys without consent
                         }
                         with open(file_path, "wb") as f:
                             plistlib.dump(seb_plist, f, fmt=plistlib.FMT_XML)

@@ -367,6 +367,10 @@
 	<string></string>
 	<key>quitURLConfirm</key>
 	<true/>
+	<key>sebServerURL</key>
+	<string></string>
+	<key>sendBrowserExamKey</key>
+	<false/>
 	<key>startURL</key>
 	<string>https://lms.lpu.in</string>
 </dict>

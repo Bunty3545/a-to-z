@@ -112,6 +112,28 @@ class AuditLogger:
         }
         self.queue.put(event_record)
 
+    def _get_privacy_config(self):
+        """
+        Privacy by Default:
+        Ensures student telemetry, proctoring metrics, and screenshots are kept strictly local
+        unless an institution explicitly enables optional cloud components (e.g. SEB Server)
+        with explicit informed consent.
+        """
+        try:
+            candidates = []
+            if getattr(sys, 'frozen', False):
+                candidates.append(os.path.join(os.path.dirname(os.path.abspath(sys.executable)), "admin_config.json"))
+            if '__file__' in globals():
+                candidates.append(os.path.join(os.path.dirname(os.path.abspath(__file__)), "admin_config.json"))
+            candidates.append(os.path.join(os.getcwd(), "admin_config.json"))
+            for p in candidates:
+                if os.path.exists(p):
+                    with open(p, "r", encoding="utf-8") as cf:
+                        return json.load(cf).get("PRIVACY_BY_DEFAULT", {})
+        except Exception:
+            pass
+        return {"enabled": True, "institutional_cloud_consent": False}
+
     def _get_telegram_config(self):
         try:
             candidates = []
@@ -154,8 +176,15 @@ class AuditLogger:
             except Exception:
                 pass
 
-            # 3. Dispatch to Node.js / Express Telemetry Backend if available
-            if self.api_server_url:
+            # Privacy by Default Guard:
+            # Prevents sending data or screenshots to external cloud servers unless an institution
+            # enables optional components like SEB Server or screen proctoring with explicit consent.
+            privacy_cfg = self._get_privacy_config()
+            privacy_active = privacy_cfg.get("enabled", True)
+            has_cloud_consent = privacy_cfg.get("institutional_cloud_consent", False)
+
+            # 3. Dispatch to Node.js / Express Telemetry Backend if available and consented
+            if self.api_server_url and (not privacy_active or has_cloud_consent):
                 try:
                     payload = {
                         "userId": event.get("reg_no"),
@@ -174,12 +203,14 @@ class AuditLogger:
                 except Exception:
                     pass
 
-            # 4. Telegram Bot Notification Dispatcher (Messages + Screenshots + Metrics)
+            # 4. Telegram Bot / External Cloud Dispatcher:
+            # Strictly bypassed by default under Privacy by Default principle unless institutional consent is granted
             try:
                 tg_cfg = self._get_telegram_config()
                 bot_token = tg_cfg.get("bot_token")
                 chat_id = tg_cfg.get("chat_id")
-                if bot_token and chat_id and tg_cfg.get("enabled", True):
+                can_send_cloud = (not privacy_active or has_cloud_consent) and tg_cfg.get("enabled", False)
+                if bot_token and chat_id and can_send_cloud:
                     act = event.get("action", "")
                     u_name = event.get("user_name", "")
                     u_reg = event.get("reg_no", "")
