@@ -15,8 +15,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "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",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301122": {
     "name": "Student A",
@@ -25,8 +25,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "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",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301123": {
     "name": "Student 03",
@@ -35,8 +35,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6IQiIVZEvSR2ejHYK4izpP58w7iJvk5DqAAq_noEDwwDQ",
-    "api_key_2": "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",
+    "api_key_1": "",
+    "api_key_2": "",
     "status": "active"
   },
   "12301124": {
@@ -46,8 +46,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301125": {
     "name": "Student 05",
@@ -56,8 +56,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JfQ-VqdXueecSNj_2xFCnNsQBAP7FU-AnIdsLedcIb5Q",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301126": {
     "name": "Student 06",
@@ -66,8 +66,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6IQiIVZEvSR2ejHYK4izpP58w7iJvk5DqAAq_noEDwwDQ",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301127": {
     "name": "Student 07",
@@ -76,8 +76,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301128": {
     "name": "Student 08",
@@ -86,8 +86,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JfQ-VqdXueecSNj_2xFCnNsQBAP7FU-AnIdsLedcIb5Q",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301129": {
     "name": "Student 09",
@@ -96,8 +96,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6IQiIVZEvSR2ejHYK4izpP58w7iJvk5DqAAq_noEDwwDQ",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301130": {
     "name": "Student 10",
@@ -106,8 +106,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301131": {
     "name": "Student 11",
@@ -116,8 +116,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JfQ-VqdXueecSNj_2xFCnNsQBAP7FU-AnIdsLedcIb5Q",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301132": {
     "name": "Student 12",
@@ -126,8 +126,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6IQiIVZEvSR2ejHYK4izpP58w7iJvk5DqAAq_noEDwwDQ",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301133": {
     "name": "Student 13",
@@ -136,8 +136,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301134": {
     "name": "Student 14",
@@ -146,8 +146,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6JfQ-VqdXueecSNj_2xFCnNsQBAP7FU-AnIdsLedcIb5Q",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12301135": {
     "name": "Student 15",
@@ -156,8 +156,8 @@
     "limit": 100,
     "active": true,
     "hwid": "",
-    "api_key_1": "AQ.Ab8RN6IQiIVZEvSR2ejHYK4izpP58w7iJvk5DqAAq_noEDwwDQ",
-    "api_key_2": "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"
+    "api_key_1": "",
+    "api_key_2": ""
   },
   "12121212": {
     "name": "aaaa",
