@@ -108,22 +108,21 @@ API_CONFIG_FILENAME = "api_config.json"
 
 # Default fallback values (used if api_config.json is missing or incomplete)
 GEMINI_API_KEYS = [
-    "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw"
+    "AQ.Ab8RN6Ktm6vXvwDqN0TJIF7v7IkdPEfupfE839IniRakUWWdSA"
 ]
 GEMINI_MODELS = [
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-2.0-flash-lite-preview-02-05",
-    "gemini-1.5-pro"
+    "gemini-3.5-flash-lite",
+    "gemini-flash-lite-latest",
+    "gemini-3.5-flash"
 ]
 
-GROQ_API_KEYS = ["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"]
+GROQ_API_KEYS = ["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"]
 GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions"
-GROQ_MODELS = ["llama-3.3-70b-versatile", "llama-3.1-8b-instant", "llama-3.2-11b-vision-preview", "mixtral-8x7b-32768"]
+GROQ_MODELS = ["openai/gpt-oss-20b", "qwen/qwen3.8-27b", "openai/gpt-oss-120b"]
 
 # Master 8-key pool for load-balancing and unstoppable fallback
 MASTER_GROQ_KEYS = [
-    "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",
+    "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",
     "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",
     "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",
     "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",
@@ -137,11 +136,9 @@ OPENAI_API_KEYS = []
 OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 OPENAI_MODELS = ["gpt-4o-mini", "gpt-4o"]
 
-OPENROUTER_API_KEYS = ["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"]
+OPENROUTER_API_KEYS = ["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"]
 OPENROUTER_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
 OPENROUTER_MODELS = [
-    "meta-llama/llama-3.2-11b-vision-instruct:free",
-    "google/gemini-2.0-flash-exp:free",
     "openrouter/auto"
 ]
 
@@ -912,7 +909,7 @@ ALLOWED_REGISTRATIONS = {
         "active": True,
         "hwid": "",
         "api_key_1": "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",
-        "api_key_2": "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"
+        "api_key_2": "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"
     },
     "12301122": {
         "name": "Student A",
@@ -941,7 +938,7 @@ ALLOWED_REGISTRATIONS = {
         "limit": 100,
         "active": True,
         "hwid": "",
-        "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
+        "api_key_1": "AQ.Ab8RN6Ktm6vXvwDqN0TJIF7v7IkdPEfupfE839IniRakUWWdSA",
         "api_key_2": "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"
     },
     "12301125": {
@@ -971,7 +968,7 @@ ALLOWED_REGISTRATIONS = {
         "limit": 100,
         "active": True,
         "hwid": "",
-        "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
+        "api_key_1": "AQ.Ab8RN6Ktm6vXvwDqN0TJIF7v7IkdPEfupfE839IniRakUWWdSA",
         "api_key_2": "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"
     },
     "12301128": {
@@ -992,7 +989,7 @@ ALLOWED_REGISTRATIONS = {
         "active": True,
         "hwid": "",
         "api_key_1": "AQ.Ab8RN6IQiIVZEvSR2ejHYK4izpP58w7iJvk5DqAAq_noEDwwDQ",
-        "api_key_2": "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"
+        "api_key_2": "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"
     },
     "12301130": {
         "name": "Student 10",
@@ -1001,7 +998,7 @@ ALLOWED_REGISTRATIONS = {
         "limit": 100,
         "active": True,
         "hwid": "",
-        "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
+        "api_key_1": "AQ.Ab8RN6Ktm6vXvwDqN0TJIF7v7IkdPEfupfE839IniRakUWWdSA",
         "api_key_2": "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"
     },
     "12301131": {
@@ -1031,7 +1028,7 @@ ALLOWED_REGISTRATIONS = {
         "limit": 100,
         "active": True,
         "hwid": "",
-        "api_key_1": "AQ.Ab8RN6JiV1Rtcc6biyx_jGTmCnmy4K1Uvl5JPibWcJrReOKZrw",
+        "api_key_1": "AQ.Ab8RN6Ktm6vXvwDqN0TJIF7v7IkdPEfupfE839IniRakUWWdSA",
         "api_key_2": "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"
     },
     "12301134": {
@@ -1367,7 +1364,7 @@ def capture_screen_b64(region=None, max_width=None, quality=92):
             resample_filter = getattr(Image, 'Resampling', Image).LANCZOS
             img = img.resize((target_w, target_h), resample_filter)
         buf = io.BytesIO()
-        img.save(buf, format="JPEG", quality=quality, optimize=True)
+        img.save(buf, format="JPEG", quality=quality, optimize=False)
         return base64.b64encode(buf.getvalue()).decode()
     except Exception as e:
         err_msg = str(e).lower()
@@ -1494,14 +1491,20 @@ def _query_gemini(prompt, images_b64, system):
         parts.append({"text": f"{system}\n\nSolve from the screenshot(s) above."})
     else:
         parts = [{"text": f"{system}\n\n{prompt}"}]
-    payload = {"contents": [{"parts": parts}]}
+    payload = {
+        "contents": [{"parts": parts}],
+        "generationConfig": {
+            "maxOutputTokens": 30 if "CORRECT_OPTION" in system else 2048,
+            "temperature": 0.1
+        }
+    }
     headers = {"Content-Type": "application/json"}
     for key in get_rotating_key_order(valid_keys):
         for model in GEMINI_MODELS:
             try:
                 r = requests.post(
                     f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}",
-                    json=payload, headers=headers, timeout=6)
+                    json=payload, headers=headers, timeout=5)
                 if r.status_code == 200:
                     candidates = r.json().get("candidates", [])
                     if candidates:
@@ -1516,22 +1519,17 @@ def _query_gemini(prompt, images_b64, system):
     return None
 
 def _query_groq(prompt, images_b64, system):
+    if images_b64:
+        return None  # Groq currently hosts text models; bypass for instant vision speed
     for key in get_rotating_key_order(GROQ_API_KEYS):
         headers = {"Authorization": f"Bearer {key}", "Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
-        models_to_try = ["llama-3.2-11b-vision-preview", "llama-3.2-90b-vision-preview"] if images_b64 else GROQ_MODELS
-        for model in models_to_try:
+        for model in GROQ_MODELS:
             try:
                 messages = [{"role": "system", "content": system}]
-                if images_b64:
-                    content = [{"type": "text", "text": "Solve from screenshot(s)."}]
-                    for img in images_b64:
-                        content.append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{img}"}})
-                    messages.append({"role": "user", "content": content})
-                else:
-                    messages.append({"role": "user", "content": prompt or "Solve."})
+                messages.append({"role": "user", "content": prompt or "Solve."})
                 r = requests.post(GROQ_ENDPOINT,
                                   json={"model": model, "messages": messages, "temperature": 0.2},
-                                  headers=headers, timeout=8)
+                                  headers=headers, timeout=6)
                 if r.status_code == 200:
                     text = r.json()["choices"][0]["message"]["content"]
                     log(f"Groq OK ({model})")
@@ -1786,7 +1784,7 @@ def sanitize_code(raw):
 # SHAKE DETECTOR (MCQ Method A - vertical shake)
 # =====================================================
 class ShakeDetector:
-    def __init__(self, window_sec=2.0, min_changes=4, threshold=28):
+    def __init__(self, window_sec=1.6, min_changes=3, threshold=20):
         self.window = window_sec
         self.min_changes = min_changes
         self.threshold = threshold
@@ -1799,7 +1797,7 @@ class ShakeDetector:
             self._positions.append((now, y))
             cutoff = now - self.window
             self._positions = [(t, p) for t, p in self._positions if t >= cutoff]
-            if len(self._positions) < 6:
+            if len(self._positions) < 4:
                 return False
             changes = 0
             last_dir = 0
@@ -2636,7 +2634,7 @@ class OfficeServicesAssistant:
         if self.paused or self.is_processing:
             return
         if self.shake.update(x, y):
-            if self._debounce_ok("mcq_shake", 2.5):
+            if self._debounce_ok("mcq_shake", 1.2):
                 log("[SHAKE] Vertical shake detected! Solving MCQ...")
                 try:
                     from activity_logger import audit_tracker
@@ -2913,7 +2911,7 @@ class OfficeServicesAssistant:
             self.overlay.update(status="🔴 Processing", mode="MCQ", action="Solving MCQ from screen...")
             set_crosshair_cursor()
 
-            img = capture_screen_b64()
+            img = capture_screen_b64(max_width=1280, quality=82)
             restore_cursor() # Instantly restore normal cursor so + never gets stuck!
 
             raw = query_ai(images_b64=[img] if img else None, mode="mcq")
@@ -3005,7 +3003,7 @@ class OfficeServicesAssistant:
 
             imgs = self._screenshots if self._screenshots else []
             if not imgs:
-                img = capture_screen_b64()
+                img = capture_screen_b64(max_width=1280, quality=82)
                 if img:
                     imgs = [img]
             restore_cursor() # Instantly restore normal cursor so + never gets stuck!
