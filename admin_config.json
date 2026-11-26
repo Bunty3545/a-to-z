@@ -13,7 +13,7 @@
     "security_options": {
       "anti_screen_capture": true,
       "strict_single_monitor": true,
-      "kiosk_lockdown": false,
+      "kiosk_lockdown": true,
       "block_screen_sharing": true,
       "block_screen_recording": true,
       "terminate_remote_tools": true,

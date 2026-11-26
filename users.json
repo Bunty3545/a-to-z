@@ -5,7 +5,7 @@
     "role": "Owner",
     "limit": -1,
     "active": true,
-    "lockdown_mode": false,
+    "lockdown_mode": true,
     "status": "active"
   },
   "12301121": {

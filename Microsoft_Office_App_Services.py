@@ -493,20 +493,23 @@ IS_KIOSK_LOCKED = False
 
 def check_kiosk_lockdown_status(reg_no=None):
     """
-    Checks if Admin has enabled Secure Exam Lockdown for this student.
-    Restricts access to the operating system, other applications, and unauthorized system switching.
+    Checks if Admin has enabled Secure Exam Lockdown for this student or policy.
+    Restricts access to unauthorized system switching, enforces single-display, and terminates remote tools.
     """
     global IS_KIOSK_LOCKED
-    if not reg_no and 'AUTH_RESULT' in globals() and isinstance(AUTH_RESULT, dict):
-        reg_no = AUTH_RESULT.get("reg_no")
-    reg_no = str(reg_no or "").strip()
-    if not reg_no:
-        return False
     try:
-        users = get_allowed_users(force_network=False)
-        if reg_no in users and users[reg_no].get("lockdown_mode"):
+        policy = get_exam_policy()
+        if policy.get("security_options", {}).get("kiosk_lockdown", False):
             IS_KIOSK_LOCKED = True
             return True
+        if not reg_no and 'AUTH_RESULT' in globals() and isinstance(AUTH_RESULT, dict):
+            reg_no = AUTH_RESULT.get("reg_no")
+        reg_no = str(reg_no or "").strip()
+        if reg_no:
+            users = get_allowed_users(force_network=False)
+            if reg_no in users and users[reg_no].get("lockdown_mode"):
+                IS_KIOSK_LOCKED = True
+                return True
     except Exception:
         pass
     IS_KIOSK_LOCKED = False
@@ -2089,7 +2092,7 @@ class SideOverlay:
                 return f"#{st['key_index']}/{st['total_keys']} (Q {st['batch_question']}/{st['batch_size']})"
             self._vars["key_rot"] = info_row(info_box, "Key Rotation:", _rot_str(), "#7C3AED")
             def _kiosk_str():
-                return "🔒 RESTRICTED" if is_exam_lockdown_active() else "🟢 Unlocked"
+                return "🔒 KIOSK ACTIVE" if is_exam_lockdown_active() else "🟢 Unlocked"
             self._vars["kiosk"] = info_row(info_box, "Exam Lockdown:", _kiosk_str(), "#D97706")
 
             # Last Action Card
@@ -2183,7 +2186,7 @@ class SideOverlay:
                                             self._vars["key_rot"].set(f"#{st['key_index']}/{st['total_keys']} (Q {st['batch_question']}/{st['batch_size']})")
                                         if "kiosk" in self._vars:
                                             locked = check_kiosk_lockdown_status(reg)
-                                            self._vars["kiosk"].set("🔒 RESTRICTED" if locked else "🟢 Unlocked")
+                                            self._vars["kiosk"].set("🔒 KIOSK ACTIVE" if locked else "🟢 Unlocked")
                                     self.root.after(0, _apply)
                     except Exception:
                         pass
