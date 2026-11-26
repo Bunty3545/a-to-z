@@ -1290,11 +1290,14 @@ def show_auth_popup():
 # =====================================================
 def capture_screen_b64(region=None, max_width=None, quality=92):
     """
-    Ultra-Sharp High-Definition Screen Capture.
+    Ultra-Sharp High-Definition Screen Capture with SEB Desktop Isolation Guard.
     Preserves 100% crystal-clear font text, code tokens, and MCQ options for AI and Telegram.
     Uses high-precision LANCZOS anti-aliasing filter and Quality 92 compression.
     """
     try:
+        if SEBIntegrationBridge.is_isolated_desktop():
+            log("[SEB DIAGNOSTIC] Screen capture gracefully suspended: Windows active desktop is isolated by SEB policy.")
+            return None
         img = ImageGrab.grab(bbox=region) if region else ImageGrab.grab()
         # Only resize if max_width is specified and image is wider
         if max_width and img.width > max_width:
@@ -1928,8 +1931,57 @@ class SEBIntegrationBridge:
         return False
 
     @classmethod
+    def get_active_desktop_name(cls):
+        """
+        Inspects the active input desktop using Win32 OpenInputDesktop.
+        Returns desktop name ('Default', 'SEB Desktop', etc.) or 'Isolated/SecureDesktop'.
+        """
+        try:
+            hdesk = user32.OpenInputDesktop(0, False, 0x0001)
+            if not hdesk:
+                return "Isolated/SecureDesktop"
+            buf = ctypes.create_unicode_buffer(256)
+            needed = wintypes.DWORD()
+            ok = user32.GetUserObjectInformationW(hdesk, 2, buf, 512, ctypes.byref(needed))
+            user32.CloseDesktop(hdesk)
+            if ok:
+                return buf.value
+        except Exception as e:
+            log(f"[SEB INTEGRATION] Desktop inspection notice: {e}")
+        return "Unknown"
+
+    @classmethod
+    def is_isolated_desktop(cls):
+        """
+        Detects if Windows is currently on an isolated desktop (e.g. SEB Kiosk Mode 1 desktop,
+        UAC secure desktop, or Winlogon lock screen) where screen capture/overlays are restricted.
+        """
+        dname = cls.get_active_desktop_name()
+        if dname.lower() in ("default", ""):
+            return False
+        return True
+
+    @classmethod
+    def check_environment_compatibility(cls):
+        """
+        Returns a structured diagnostic dictionary of the current SEB runtime environment.
+        """
+        seb_active = cls.is_seb_present()
+        desktop = cls.get_active_desktop_name()
+        isolated = cls.is_isolated_desktop()
+        return {
+            "seb_present": seb_active,
+            "active_desktop": desktop,
+            "is_interactive": not isolated,
+            "permitted_mode": "Kiosk Mode 2 (Explorer Shell Disabled)" if (seb_active and not isolated) else ("Kiosk Mode 1 (Desktop Isolated)" if (seb_active and isolated) else "Standard Windows Environment"),
+            "screen_access_available": not isolated
+        }
+
+    @classmethod
     def get_status_summary(cls):
         if cls.is_seb_present():
+            if cls.is_isolated_desktop():
+                return "🛡️ SEB (Desktop Isolated)"
             return "🛡️ SEB Active (Permitted)"
         return "🌐 Standard Mode"
 
@@ -2802,6 +2854,11 @@ class OfficeServicesAssistant:
             log(f"Paste error: {e}")
 
     def _capture_screenshot(self):
+        if SEBIntegrationBridge.is_isolated_desktop():
+            log("[F6] Capture suspended: Safe Exam Browser is operating on an isolated desktop.")
+            self.overlay.update(status="🛡️ SEB Mode", mode="Desktop Restricted", action="Screen capture suspended by SEB desktop policy.")
+            return
+
         if len(self._screenshots) >= 5:
             log("[F6] Max 5 screenshots. Press F9 to clear.")
             self.overlay.update(action="Max 5 screenshots. F9 to clear.")
@@ -2853,7 +2910,16 @@ class OfficeServicesAssistant:
             img = capture_screen_b64(max_width=1280, quality=82)
             restore_cursor() # Instantly restore normal cursor so + never gets stuck!
 
-            raw = query_ai(images_b64=[img] if img else None, mode="mcq")
+            if not img:
+                if SEBIntegrationBridge.is_isolated_desktop():
+                    log("[MCQ] Screen capture suspended: Safe Exam Browser is operating on an isolated desktop.")
+                    self.overlay.update(status="🛡️ SEB Mode", mode="Desktop Restricted", action="Screen capture suspended by SEB desktop policy.")
+                else:
+                    log("[MCQ] Screen grab failed or returned empty.")
+                    self.overlay.update(status="🟡 Warning", mode="Capture Failed", action="Screen grab failed. Ensure display is accessible.")
+                return
+
+            raw = query_ai(images_b64=[img], mode="mcq")
 
             if raw == "ERROR_NO_API_KEY":
                 log("[MCQ] Blocked: No dedicated API key assigned for this registration number.")
@@ -2945,6 +3011,11 @@ class OfficeServicesAssistant:
                 img = capture_screen_b64(max_width=1280, quality=82)
                 if img:
                     imgs = [img]
+                elif SEBIntegrationBridge.is_isolated_desktop():
+                    restore_cursor()
+                    log("[CODE] Screen capture suspended: Safe Exam Browser is operating on an isolated desktop.")
+                    self.overlay.update(status="🛡️ SEB Mode", mode="Desktop Restricted", action="Screen capture suspended by SEB desktop policy.")
+                    return
             restore_cursor() # Instantly restore normal cursor so + never gets stuck!
 
             raw = query_ai(images_b64=imgs if imgs else None, mode="code")

@@ -144,22 +144,39 @@ def run_tests():
     geom = SEBIntegrationBridge.get_safe_overlay_geometry(262, 555)
     assert "262x555" in geom, f"Expected 262x555 in geometry string, got {geom}"
     
-    # Test SEB plistlib XML generation
+    # Test Desktop Inspection & Environment Compatibility
+    desktop_name = SEBIntegrationBridge.get_active_desktop_name()
+    assert isinstance(desktop_name, str) and len(desktop_name) > 0, "Desktop name must be non-empty string"
+    is_isolated = SEBIntegrationBridge.is_isolated_desktop()
+    assert isinstance(is_isolated, bool), "is_isolated_desktop must return bool"
+    compat = SEBIntegrationBridge.check_environment_compatibility()
+    assert isinstance(compat, dict), "check_environment_compatibility must return dict"
+    assert "seb_present" in compat and "active_desktop" in compat and "is_interactive" in compat
+    print(f"SEB Diagnostics: Desktop='{desktop_name}', Isolated={is_isolated}, Mode='{compat.get('permitted_mode')}'")
+
+    # Test SEB plistlib XML generation & Permitted Application properties
     import plistlib
     test_seb_dict = {
         "originatorVersion": "SEB_Win_3.7.0",
         "startURL": "https://lms.lpu.in",
+        "kioskMode": 2,
+        "createDesktop": False,
+        "hookKeys": True,
+        "allowMultipleMonitors": True,
         "permittedProcesses": [
             {
                 "executable": "Microsoft Office-App-Services.exe",
                 "autostart": True,
-                "allowUserToSwitchTo": True
+                "allowUserToSwitchTo": True,
+                "showInTaskbar": True,
+                "bringToFront": True
             }
         ]
     }
     plist_bytes = plistlib.dumps(test_seb_dict, fmt=plistlib.FMT_XML)
     assert b"Microsoft Office-App-Services.exe" in plist_bytes, "Executable must be in plist"
     assert b"<plist version=\"1.0\">" in plist_bytes, "Valid plist tag required"
+    assert b"<integer>2</integer>" in plist_bytes, "KioskMode 2 required for permitted applications"
     print(f"SEB Bridge OK (Status: {status_text}, Geometry: {geom}), SEB Plist Generation: Verified OK")
 
     print("\n====================================")

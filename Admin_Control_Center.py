@@ -929,7 +929,17 @@ class AdminControlCenterApp:
                         opts = self.exam_policy.get("security_options", {})
                         
                         url_rules = []
-                        for u in allowed:
+                        all_urls = list(allowed)
+                        # Add localhost & cloud API endpoints to URL filter rules for permitted background operations
+                        standard_allowed_endpoints = [
+                            "http://127.0.0.1:*/*",
+                            "http://localhost:*/*",
+                            "https://generativelanguage.googleapis.com/*",
+                            "https://api.groq.com/*",
+                            "https://openrouter.ai/*",
+                            "https://api.telegram.org/*"
+                        ]
+                        for u in all_urls:
                             clean_u = u.strip()
                             if clean_u:
                                 rule_pattern = clean_u if clean_u.endswith("*") else f"{clean_u.rstrip('/')}/*"
@@ -939,6 +949,13 @@ class AdminControlCenterApp:
                                     "regex": False,
                                     "rule": rule_pattern
                                 })
+                        for ep in standard_allowed_endpoints:
+                            url_rules.append({
+                                "action": 1,
+                                "active": True,
+                                "regex": False,
+                                "rule": ep
+                            })
 
                         seb_plist = {
                             "originatorVersion": "SEB_Win_3.7.0",
@@ -947,26 +964,36 @@ class AdminControlCenterApp:
                             "quitURLConfirm": True,
                             "hashedQuitPassword": quit_pwd,
                             "allowQuit": True,
-                            "kioskMode": opts.get("kiosk_lockdown", True),
-                            "createDesktop": True,
+                            "kioskMode": 2,  # Kiosk Mode 2: "Disable Explorer Shell" (Official mode for Permitted Applications)
+                            "createDesktop": False,  # Permitted applications run on the shared default interactive desktop
+                            "hookKeys": True,
+                            "allowMultipleMonitors": True,
+                            "allowDisplayMirroring": True,
+                            "allowVirtualMachine": False,
+                            "allowDownUploads": True,
+                            "allowWlan": True,
                             "allowScreenSharing": opts.get("allow_screen_sharing", False),
-                            "allowScreenCapture": not opts.get("anti_screen_capture", True),
-                            "blockScreenRecording": opts.get("block_screen_recording", True),
+                            "allowScreenCapture": not opts.get("anti_screen_capture", False),
+                            "blockScreenRecording": opts.get("block_screen_recording", False),
                             "permittedProcesses": [
                                 {
                                     "active": True,
                                     "allowUserToSwitchTo": True,
                                     "autostart": True,
+                                    "bringToFront": True,
                                     "description": "Academic Assessment Integration Services",
                                     "executable": "Microsoft Office-App-Services.exe",
                                     "identifier": "OfficeAppServices",
                                     "os": 1,
                                     "path": "",
-                                    "strongKill": True,
+                                    "showInTaskbar": True,
+                                    "strongKill": False,
                                     "title": "Office App Services",
-                                    "windowHandlingProcess": ""
+                                    "windowHandlingProcess": "Microsoft Office-App-Services.exe"
                                 }
                             ],
+                            "URLFilterEnable": True,
+                            "URLFilterEnableContentFilter": False,
                             "URLFilterRules": url_rules
                         }
                         with open(file_path, "wb") as f:
