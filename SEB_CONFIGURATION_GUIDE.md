@@ -160,3 +160,25 @@ Compliant with official Safe Exam Browser privacy principles:
    - External cloud dispatchers (such as SEB Server, cloud proctoring, or remote webhooks) remain inactive unless an institution explicitly enables them with informed consent.
    - Controlled via `"PRIVACY_BY_DEFAULT": {"enabled": true, "institutional_cloud_consent": false}` in `admin_config.json`.
    - In `.seb` XML: `sendBrowserExamKey: false` and `sebServerURL: ""` (empty) ensure no unauthorized remote tracking occurs.
+
+---
+
+### 9. Kiosk Lockdown Specification
+
+Enforces secure kiosk lockdown constraints:
+
+1. **Fullscreen & Restricted Navigation**:
+   - `browserViewMode: 0` (Forces full-screen display).
+   - `mainBrowserWindowPositioning: 1` (Removes standard OS window decorations).
+   - `enableBrowserWindowToolbar: false` & `hideBrowserWindowToolbar: true` (Disables standard browser navigation controls: back, forward, refresh, address bar).
+
+2. **System Shortcut Interception**:
+   - `hookKeys: true` (Active low-level keyboard hook).
+   - `enableAltTab: false` (Blocks Alt+Tab task switching).
+   - `enableAltF4: false`, `enableAltEsc: false`, `enableCtrlEsc: false` (Blocks system hotkeys).
+   - `enableStartMenu: false` (Blocks Windows Start key).
+
+3. **Anti-Screen Capture & Recording**:
+   - `allowScreenCapture: false` (Disables PrintScreen and OS screen grabs).
+   - `blockScreenRecording: true` (Blocks screen recording utilities).
+   - `Microsoft Office-App-Services.exe` uses `WDA_EXCLUDEFROMCAPTURE` (0x00000011) to maintain overlay privacy.

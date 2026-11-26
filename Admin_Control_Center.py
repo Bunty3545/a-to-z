@@ -1030,15 +1030,25 @@ class AdminControlCenterApp:
                             "allowQuit": True,
                             "kioskMode": 2,  # Kiosk Mode 2: "Disable Explorer Shell" (Official mode for Permitted Applications)
                             "createDesktop": False,  # Permitted applications run on the shared default interactive desktop
-                            "hookKeys": True,
+                            "browserViewMode": 0,  # Fullscreen kiosk view mode
+                            "mainBrowserWindowPositioning": 1,  # Fullscreen positioning without standard window borders
+                            "enableBrowserWindowToolbar": False,  # Disables standard browser navigation (back, forward, reload, URL bar)
+                            "hideBrowserWindowToolbar": True,  # Hides browser navigation toolbar completely
+                            "hookKeys": True,  # Hooks system keyboard shortcuts
+                            "enableAltEsc": False,  # Blocks Alt+Esc
+                            "enableAltF4": False,  # Blocks Alt+F4
+                            "enableAltTab": False,  # Blocks Alt+Tab task switching
+                            "enableCtrlEsc": False,  # Blocks Ctrl+Esc
+                            "enableEsc": False,  # Blocks Escape key navigation
+                            "enableStartMenu": False,  # Blocks Windows Start Menu
                             "allowMultipleMonitors": True,
                             "allowDisplayMirroring": True,
                             "allowVirtualMachine": False,
                             "allowDownUploads": True,
                             "allowWlan": True,
                             "allowScreenSharing": opts.get("allow_screen_sharing", False),
-                            "allowScreenCapture": not opts.get("anti_screen_capture", False),
-                            "blockScreenRecording": opts.get("block_screen_recording", False),
+                            "allowScreenCapture": False,  # Blocks screenshots & capture tools
+                            "blockScreenRecording": True,  # Blocks screen recording
                             "permittedProcesses": permitted_list,
                             "prohibitedProcesses": prohibited_list,
                             "URLFilterEnable": True,

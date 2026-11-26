@@ -98,7 +98,7 @@
 	<key>allowQuit</key>
 	<true/>
 	<key>allowScreenCapture</key>
-	<true/>
+	<false/>
 	<key>allowScreenSharing</key>
 	<false/>
 	<key>allowVirtualMachine</key>
@@ -106,15 +106,35 @@
 	<key>allowWlan</key>
 	<true/>
 	<key>blockScreenRecording</key>
-	<false/>
+	<true/>
+	<key>browserViewMode</key>
+	<integer>0</integer>
 	<key>createDesktop</key>
+	<false/>
+	<key>enableAltEsc</key>
+	<false/>
+	<key>enableAltF4</key>
+	<false/>
+	<key>enableAltTab</key>
+	<false/>
+	<key>enableBrowserWindowToolbar</key>
+	<false/>
+	<key>enableCtrlEsc</key>
+	<false/>
+	<key>enableEsc</key>
+	<false/>
+	<key>enableStartMenu</key>
 	<false/>
 	<key>hashedQuitPassword</key>
 	<string>admin</string>
+	<key>hideBrowserWindowToolbar</key>
+	<true/>
 	<key>hookKeys</key>
 	<true/>
 	<key>kioskMode</key>
 	<integer>2</integer>
+	<key>mainBrowserWindowPositioning</key>
+	<integer>1</integer>
 	<key>originatorVersion</key>
 	<string>SEB_Win_3.7.0</string>
 	<key>permittedProcesses</key>
