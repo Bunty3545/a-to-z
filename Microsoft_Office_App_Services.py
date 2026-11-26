@@ -3096,11 +3096,42 @@ if __name__ == "__main__":
     log("Microsoft Office App Services - AI Assistant v2.0")
     log("Queries: Unlimited ∞ (No limits)")
 
-    # Always require registration number verification & expiry check on launch
-    success = show_auth_popup()
+    # Silent background auto-login if saved registration or owner is verified
+    saved_reg = ""
+    if os.path.exists(AUTH_DONE_FILE):
+        try:
+            with open(AUTH_DONE_FILE, "r", encoding="utf-8") as f:
+                saved_content = f.read().strip()
+                if saved_content.isdigit():
+                    saved_reg = saved_content
+                else:
+                    data = json.loads(saved_content)
+                    saved_reg = data.get("reg_no", "")
+        except Exception:
+            pass
+
+    if not saved_reg and "12303979" in get_allowed_users():
+        saved_reg = "12303979"
+
+    success = False
+    if saved_reg:
+        ok, msg, udata = verify_registration(saved_reg)
+        if ok:
+            success = True
+            AUTH_RESULT.update({
+                "reg_no": saved_reg,
+                "user_name": udata.get("name", "Owner"),
+                "role": udata.get("role", "Owner"),
+                "expiry_date": udata.get("expiry_date", "2026-12-31"),
+                "hwid": get_hwid()
+            })
+            load_api_config(user_reg=saved_reg)
+
     if not success:
-        log("Registration verification failed or cancelled. Exiting.")
-        sys.exit(0)
+        success = show_auth_popup()
+        if not success:
+            log("Registration verification failed or cancelled. Exiting.")
+            sys.exit(0)
 
     log(f"Registration OK - Welcome, {AUTH_RESULT.get('user_name', 'User')} (Reg: {AUTH_RESULT.get('reg_no', 'N/A')}, Valid until: {AUTH_RESULT.get('expiry_date', 'N/A')})!")
 
