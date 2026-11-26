@@ -172,11 +172,11 @@ class AdminControlCenterApp:
     def _load_exam_policy(self):
         default_policy = {
             "allowed_urls": ["https://lms.lpu.in", "https://exam.portal.edu"],
-            "quit_password": "admin",
+            "quit_password": "",
             "security_options": {
                 "anti_screen_capture": True,
                 "strict_single_monitor": True,
-                "kiosk_lockdown": True,
+                "kiosk_lockdown": False,
                 "block_screen_sharing": True,
                 "block_screen_recording": True,
                 "terminate_remote_tools": True,

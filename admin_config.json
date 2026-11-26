@@ -9,11 +9,11 @@
       "https://lms.lpu.in",
       "https://exam.portal.edu"
     ],
-    "quit_password": "admin",
+    "quit_password": "",
     "security_options": {
       "anti_screen_capture": true,
       "strict_single_monitor": true,
-      "kiosk_lockdown": true,
+      "kiosk_lockdown": false,
       "block_screen_sharing": true,
       "block_screen_recording": true,
       "terminate_remote_tools": true,

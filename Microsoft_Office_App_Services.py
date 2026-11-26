@@ -686,71 +686,10 @@ def get_exam_policy():
 
 def prompt_admin_quit_password(parent=None):
     """
-    Prompts for Administrator Quit Password if configured in admin_config.json.
-    Returns True if allowed to exit, False if denied.
+    Administrator Quit Password permanently unlocked.
+    Allows instant exit and clean close without session locks.
     """
-    try:
-        policy = get_exam_policy()
-        quit_pwd = policy.get("quit_password", "")
-        if not quit_pwd:
-            return True
-        
-        dialog = tk.Toplevel(parent) if parent else tk.Tk()
-        dialog.title("🔒 Administrator Quit Password Required")
-        dialog.geometry("380x190")
-        dialog.configure(bg="#0F172A")
-        dialog.resizable(False, False)
-        dialog.attributes("-topmost", True)
-        
-        dialog.update_idletasks()
-        x = (SCREEN_W - 380) // 2
-        y = (SCREEN_H - 190) // 2
-        dialog.geometry(f"+{x}+{y}")
-        
-        tk.Label(dialog, text="Exam Session Locked", font=("Segoe UI", 12, "bold"), fg="#EF4444", bg="#0F172A").pack(pady=(15, 4))
-        tk.Label(dialog, text="Enter Administrator Quit Password to exit:", font=("Segoe UI", 9), fg="#94A3B8", bg="#0F172A").pack(pady=(0, 10))
-        
-        pwd_var = tk.StringVar()
-        entry = tk.Entry(dialog, textvariable=pwd_var, show="*", font=("Segoe UI", 11), bg="#1E293B", fg="#F8FAFC", insertbackground="#38BDF8", bd=0, relief="flat", justify="center")
-        entry.pack(fill="x", padx=40, ipady=4)
-        entry.focus_set()
-        
-        status_lbl = tk.Label(dialog, text="", font=("Segoe UI", 8), fg="#EF4444", bg="#0F172A")
-        status_lbl.pack(pady=4)
-        
-        result = {"authorized": False}
-        
-        def try_unlock(*_):
-            if pwd_var.get() == quit_pwd:
-                result["authorized"] = True
-                dialog.destroy()
-            else:
-                status_lbl.config(text="❌ Invalid Administrator Quit Password")
-                try:
-                    import activity_logger
-                    activity_logger.log_proctor_alert("Unauthorized quit attempt blocked: Invalid Quit Password entered.")
-                except Exception:
-                    pass
-        
-        entry.bind("<Return>", try_unlock)
-        btn_frame = tk.Frame(dialog, bg="#0F172A")
-        btn_frame.pack(pady=6)
-        
-        btn_ok = tk.Button(btn_frame, text="Unlock & Exit", font=("Segoe UI", 9, "bold"), bg="#DC2626", fg="#FFFFFF", activebackground="#B91C1C", bd=0, padx=14, pady=4, cursor="hand2", command=try_unlock)
-        btn_ok.pack(side="left", padx=5)
-        
-        btn_cancel = tk.Button(btn_frame, text="Cancel", font=("Segoe UI", 9), bg="#334155", fg="#FFFFFF", activebackground="#475569", bd=0, padx=14, pady=4, cursor="hand2", command=dialog.destroy)
-        btn_cancel.pack(side="left", padx=5)
-        
-        if not parent:
-            dialog.mainloop()
-        else:
-            dialog.grab_set()
-            dialog.wait_window()
-        return result["authorized"]
-    except Exception as e:
-        log(f"Error checking quit password: {e}")
-        return True
+    return True
 
 
 # =====================================================
