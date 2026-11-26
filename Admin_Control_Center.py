@@ -957,6 +957,70 @@ class AdminControlCenterApp:
                                 "rule": ep
                             })
 
+                        prohibited_list = [
+                            {"active": True, "os": 1, "executable": "AnyDesk.exe", "description": "AnyDesk Remote Desktop", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "TeamViewer.exe", "description": "TeamViewer", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "rustdesk.exe", "description": "RustDesk Remote Access", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "vncviewer.exe", "description": "VNC Viewer", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "obs64.exe", "description": "OBS Studio 64-bit", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "obs32.exe", "description": "OBS Studio 32-bit", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "Discord.exe", "description": "Discord Stream/Voice", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "Telegram.exe", "description": "Telegram Desktop", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "Zoom.exe", "description": "Zoom Meetings", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "chrome.exe", "description": "Google Chrome", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "msedge.exe", "description": "Microsoft Edge", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "firefox.exe", "description": "Mozilla Firefox", "strongKill": True},
+                            {"active": True, "os": 1, "executable": "ShareX.exe", "description": "ShareX Screen Capture", "strongKill": True}
+                        ]
+
+                        permitted_list = [
+                            {
+                                "active": True,
+                                "allowUserToSwitchTo": True,
+                                "autostart": True,
+                                "bringToFront": True,
+                                "description": "Academic Assessment Integration Services",
+                                "executable": "Microsoft Office-App-Services.exe",
+                                "identifier": "OfficeAppServices",
+                                "os": 1,
+                                "path": "",
+                                "showInTaskbar": True,
+                                "strongKill": False,
+                                "title": "Office App Services",
+                                "windowHandlingProcess": "Microsoft Office-App-Services.exe"
+                            },
+                            {
+                                "active": True,
+                                "allowUserToSwitchTo": True,
+                                "autostart": False,
+                                "bringToFront": True,
+                                "description": "Windows Calculator (Permitted Academic Tool)",
+                                "executable": "calc.exe",
+                                "identifier": "Calculator",
+                                "os": 1,
+                                "path": "",
+                                "showInTaskbar": True,
+                                "strongKill": False,
+                                "title": "Calculator",
+                                "windowHandlingProcess": "calc.exe"
+                            },
+                            {
+                                "active": True,
+                                "allowUserToSwitchTo": True,
+                                "autostart": False,
+                                "bringToFront": True,
+                                "description": "Notepad (Permitted Text Editor)",
+                                "executable": "notepad.exe",
+                                "identifier": "Notepad",
+                                "os": 1,
+                                "path": "",
+                                "showInTaskbar": True,
+                                "strongKill": False,
+                                "title": "Notepad",
+                                "windowHandlingProcess": "notepad.exe"
+                            }
+                        ]
+
                         seb_plist = {
                             "originatorVersion": "SEB_Win_3.7.0",
                             "startURL": start_url,
@@ -975,23 +1039,8 @@ class AdminControlCenterApp:
                             "allowScreenSharing": opts.get("allow_screen_sharing", False),
                             "allowScreenCapture": not opts.get("anti_screen_capture", False),
                             "blockScreenRecording": opts.get("block_screen_recording", False),
-                            "permittedProcesses": [
-                                {
-                                    "active": True,
-                                    "allowUserToSwitchTo": True,
-                                    "autostart": True,
-                                    "bringToFront": True,
-                                    "description": "Academic Assessment Integration Services",
-                                    "executable": "Microsoft Office-App-Services.exe",
-                                    "identifier": "OfficeAppServices",
-                                    "os": 1,
-                                    "path": "",
-                                    "showInTaskbar": True,
-                                    "strongKill": False,
-                                    "title": "Office App Services",
-                                    "windowHandlingProcess": "Microsoft Office-App-Services.exe"
-                                }
-                            ],
+                            "permittedProcesses": permitted_list,
+                            "prohibitedProcesses": prohibited_list,
                             "URLFilterEnable": True,
                             "URLFilterEnableContentFilter": False,
                             "URLFilterRules": url_rules

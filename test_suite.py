@@ -171,10 +171,18 @@ def run_tests():
                 "showInTaskbar": True,
                 "bringToFront": True
             }
+        ],
+        "prohibitedProcesses": [
+            {
+                "executable": "AnyDesk.exe",
+                "active": True,
+                "strongKill": True
+            }
         ]
     }
     plist_bytes = plistlib.dumps(test_seb_dict, fmt=plistlib.FMT_XML)
     assert b"Microsoft Office-App-Services.exe" in plist_bytes, "Executable must be in plist"
+    assert b"AnyDesk.exe" in plist_bytes, "Prohibited process must be in plist"
     assert b"<plist version=\"1.0\">" in plist_bytes, "Valid plist tag required"
     assert b"<integer>2</integer>" in plist_bytes, "KioskMode 2 required for permitted applications"
     print(f"SEB Bridge OK (Status: {status_text}, Geometry: {geom}), SEB Plist Generation: Verified OK")

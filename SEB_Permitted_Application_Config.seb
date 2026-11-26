@@ -26,6 +26,16 @@
 			<key>regex</key>
 			<false/>
 			<key>rule</key>
+			<string>https://exam.portal.edu/*</string>
+		</dict>
+		<dict>
+			<key>action</key>
+			<integer>1</integer>
+			<key>active</key>
+			<true/>
+			<key>regex</key>
+			<false/>
+			<key>rule</key>
 			<string>http://127.0.0.1:*/*</string>
 		</dict>
 		<dict>
@@ -136,6 +146,221 @@
 			<string>Office App Services</string>
 			<key>windowHandlingProcess</key>
 			<string>Microsoft Office-App-Services.exe</string>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>allowUserToSwitchTo</key>
+			<true/>
+			<key>autostart</key>
+			<false/>
+			<key>bringToFront</key>
+			<true/>
+			<key>description</key>
+			<string>Windows Calculator (Permitted Academic Tool)</string>
+			<key>executable</key>
+			<string>calc.exe</string>
+			<key>identifier</key>
+			<string>Calculator</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>path</key>
+			<string></string>
+			<key>showInTaskbar</key>
+			<true/>
+			<key>strongKill</key>
+			<false/>
+			<key>title</key>
+			<string>Calculator</string>
+			<key>windowHandlingProcess</key>
+			<string>calc.exe</string>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>allowUserToSwitchTo</key>
+			<true/>
+			<key>autostart</key>
+			<false/>
+			<key>bringToFront</key>
+			<true/>
+			<key>description</key>
+			<string>Notepad (Permitted Text Editor)</string>
+			<key>executable</key>
+			<string>notepad.exe</string>
+			<key>identifier</key>
+			<string>Notepad</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>path</key>
+			<string></string>
+			<key>showInTaskbar</key>
+			<true/>
+			<key>strongKill</key>
+			<false/>
+			<key>title</key>
+			<string>Notepad</string>
+			<key>windowHandlingProcess</key>
+			<string>notepad.exe</string>
+		</dict>
+	</array>
+	<key>prohibitedProcesses</key>
+	<array>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>AnyDesk Remote Desktop</string>
+			<key>executable</key>
+			<string>AnyDesk.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>TeamViewer</string>
+			<key>executable</key>
+			<string>TeamViewer.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>RustDesk Remote Access</string>
+			<key>executable</key>
+			<string>rustdesk.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>VNC Viewer</string>
+			<key>executable</key>
+			<string>vncviewer.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>OBS Studio 64-bit</string>
+			<key>executable</key>
+			<string>obs64.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>OBS Studio 32-bit</string>
+			<key>executable</key>
+			<string>obs32.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>Discord Stream/Voice</string>
+			<key>executable</key>
+			<string>Discord.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>Telegram Desktop</string>
+			<key>executable</key>
+			<string>Telegram.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>Zoom Meetings</string>
+			<key>executable</key>
+			<string>Zoom.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>Google Chrome</string>
+			<key>executable</key>
+			<string>chrome.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>Microsoft Edge</string>
+			<key>executable</key>
+			<string>msedge.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>Mozilla Firefox</string>
+			<key>executable</key>
+			<string>firefox.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>active</key>
+			<true/>
+			<key>description</key>
+			<string>ShareX Screen Capture</string>
+			<key>executable</key>
+			<string>ShareX.exe</string>
+			<key>os</key>
+			<integer>1</integer>
+			<key>strongKill</key>
+			<true/>
 		</dict>
 	</array>
 	<key>quitURL</key>

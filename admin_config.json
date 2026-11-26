@@ -17,7 +17,10 @@
       "block_screen_sharing": true,
       "block_screen_recording": true,
       "terminate_remote_tools": true,
-      "allow_screen_sharing": false
+      "allow_screen_sharing": false,
+      "resource_and_network_control": true,
+      "filter_allowed_urls": true,
+      "prohibit_unauthorized_apps": true
     }
   }
 }

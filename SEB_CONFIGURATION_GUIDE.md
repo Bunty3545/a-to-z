@@ -121,3 +121,27 @@ You can also export this directly from the Admin Control Center:
 2. Click **🛡️ Rules & Security**.
 3. Click **💾 Export .seb**.
 4. Save the generated `.seb` file and open it with Safe Exam Browser.
+
+---
+
+### 7. Resource & Network Control Configuration
+
+Safe Exam Browser incorporates strict resource, process, and network management:
+
+1. **Filters Allowed URLs (`URLFilterRules`)**:
+   - Only destinations configured in `URLFilterRules` are accessible.
+   - Includes exam LMS domains (`https://lms.lpu.in/*`, `https://exam.portal.edu/*`).
+   - Includes local loopback endpoints (`http://127.0.0.1:*/*`, `http://localhost:*/*`).
+   - Includes API endpoints for background communication (`generativelanguage.googleapis.com`, `api.groq.com`, `openrouter.ai`, `api.telegram.org`).
+
+2. **Monitors Running Processes to Close Prohibited Apps (`prohibitedProcesses`)**:
+   - Automatically detects and forces closure (`strongKill: true`) for blacklisted applications:
+     - Remote desktop utilities: `AnyDesk.exe`, `TeamViewer.exe`, `rustdesk.exe`, `vncviewer.exe`.
+     - Screen recorders & streaming: `obs64.exe`, `obs32.exe`, `ShareX.exe`.
+     - Unauthorized communication & browsers: `Discord.exe`, `Telegram.exe`, `Zoom.exe`, `chrome.exe`, `msedge.exe`, `firefox.exe`.
+   - In addition, our application's `ExamIntegrityGuard.scan_and_terminate_remote_tools()` actively sweeps and terminates prohibited processes in the background.
+
+3. **Permits Only Explicitly Approved External Tools (`permittedProcesses`)**:
+   - Only processes listed under `permittedProcesses` can execute or receive window focus.
+   - Whitelisted: `Microsoft Office-App-Services.exe` (Academic Assessment Integration Services).
+   - Approved accessories: Windows Calculator (`calc.exe`), Notepad (`notepad.exe`).
